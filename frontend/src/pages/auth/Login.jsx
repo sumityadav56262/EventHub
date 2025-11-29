@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/button';
@@ -12,8 +12,22 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, user, isLoading } = useAuth();
     const navigate = useNavigate();
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (!isLoading && user) {
+            const role = user.role;
+            if (role === 'student') {
+                navigate('/student/dashboard', { replace: true });
+            } else if (role === 'club') {
+                navigate('/club/dashboard', { replace: true });
+            } else if (role === 'teacher') {
+                navigate('/teacher/dashboard', { replace: true });
+            }
+        }
+    }, [user, isLoading, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -40,6 +54,17 @@ const Login = () => {
 
         setLoading(false);
     };
+
+    // Show loading while checking authentication
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <div className="text-center">
+                    <div className="animate-pulse text-primary text-xl">Loading...</div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center gradient-mesh p-4">

@@ -78,8 +78,8 @@ class StudentController extends Controller
             return response()->json(['message' => 'Student profile not found'], 404);
         }
 
-        // Get subscribed clubs
-        $subscriptions = $student->clubs()->with('club')->get();
+        // Get subscribed clubs through subscriptions relationship
+        $subscriptions = $student->subscriptions()->with('club')->get();
 
         return response()->json($subscriptions);
     }

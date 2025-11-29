@@ -113,9 +113,24 @@ class AttendanceController extends Controller
     {
         $attendances = Attendance::where('event_id', $event_id)
             ->with('student')
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        return response()->json($attendances);
+        // Format the response for better frontend consumption
+        $formattedAttendances = $attendances->map(function ($attendance) {
+            return [
+                'id' => $attendance->id,
+                'name' => $attendance->student->name,
+                'qid' => $attendance->student->QID,
+                'course' => $attendance->student->course,
+                'section' => $attendance->student->section,
+                'programme' => $attendance->student->programme,
+                'status' => $attendance->status,
+                'timestamp' => $attendance->created_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
+        return response()->json($formattedAttendances);
     }
 
     public function getEventAttendance($event_id)

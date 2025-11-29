@@ -20,23 +20,20 @@ export const AuthProvider = ({ children }) => {
         const fetchUser = async () => {
             if (token) {
                 try {
-                    // Assuming there's a /user endpoint to get current user details
-                    // If not, we rely on the login response to set user
-                    // For now, we'll try to fetch user if token exists
-                    const response = await api.get('/user'); // Adjust endpoint as needed
+                    const response = await api.get('/user');
                     setUser(response.data);
                 } catch (error) {
                     console.error("Failed to fetch user", error);
                     // If token is invalid, clear it
-                    // logout();
+                    localStorage.removeItem('token');
+                    setToken(null);
+                    setUser(null);
                 }
             }
             setIsLoading(false);
         };
 
-        // fetchUser(); 
-        // For now, we'll just set loading to false as we might not have a /user endpoint ready
-        setIsLoading(false);
+        fetchUser();
     }, [token]);
 
     const login = async (email, password) => {

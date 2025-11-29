@@ -45,8 +45,8 @@ const Sidebar = () => {
                                 key={item.path}
                                 to={item.path}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive(item.path)
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'hover:bg-secondary'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'hover:bg-secondary'
                                     }`}
                             >
                                 <span className="text-xl">{item.icon}</span>
@@ -68,7 +68,7 @@ const Navbar = () => {
         <header className="bg-card border-b border-border px-6 py-4">
             <div className="flex items-center justify-between">
                 <div className="lg:ml-0 ml-12">
-                    <h1 className="text-xl font-semibold">Welcome, {user?.name || 'Student'}!</h1>
+                    <h1 className="text-xl font-semibold"><span className="text-primary">Event</span>Hub</h1>
                     <p className="text-sm text-muted-foreground">Manage your events and clubs</p>
                 </div>
 
