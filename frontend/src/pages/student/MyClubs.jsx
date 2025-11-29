@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useStudent } from '../../context/StudentContext';
 import { getClubEvents } from '../../api/events';
-import { getEventAttendance } from '../../api/attendance';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import toast from 'react-hot-toast';
 
 const MyClubs = () => {
     const { subscriptions, fetchSubscriptions } = useStudent();
     const [loading, setLoading] = useState(true);
-    const [clubsWithEvents, setClubsWithEvents] = useState([]);
-    const [expandedClubId, setExpandedClubId] = useState(null);
+    const [clubEvents, setClubEvents] = useState({});
 
     useEffect(() => {
         loadMyClubs();
@@ -22,42 +20,20 @@ const MyClubs = () => {
         setLoading(false);
     };
 
-    const loadClubEvents = async (clubId) => {
-        try {
-            const events = await getClubEvents(clubId);
-
-            // Load attendance status for each event
-            const eventsWithAttendance = await Promise.all(
-                events.map(async (event) => {
-                    try {
-                        const attendance = await getEventAttendance(event.id);
-                        return { ...event, attendance };
-                    } catch {
-                        return { ...event, attendance: null };
-                    }
-                })
-            );
-
-            setClubsWithEvents(prev => ({
-                ...prev,
-                [clubId]: eventsWithAttendance
-            }));
-        } catch (error) {
-            toast.error('Failed to load club events');
-            console.error(error);
-        }
-    };
-
-    const toggleClub = async (clubId) => {
-        if (expandedClubId === clubId) {
-            setExpandedClubId(null);
-        } else {
-            setExpandedClubId(clubId);
-            if (!clubsWithEvents[clubId]) {
-                await loadClubEvents(clubId);
+    useEffect(() => {
+        // Load events for each subscribed club
+        subscriptions.forEach(async (sub) => {
+            try {
+                const events = await getClubEvents(sub.club.id);
+                setClubEvents(prev => ({
+                    ...prev,
+                    [sub.club.id]: events
+                }));
+            } catch (error) {
+                console.error('Failed to load club events:', error);
             }
-        }
-    };
+        });
+    }, [subscriptions]);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -68,11 +44,6 @@ const MyClubs = () => {
             hour: '2-digit',
             minute: '2-digit',
         });
-    };
-
-    const getAttendanceStatus = (event) => {
-        if (!event.attendance) return 'unknown';
-        return event.attendance.status === 'present' ? 'present' : 'absent';
     };
 
     if (loading) {
@@ -87,103 +58,77 @@ const MyClubs = () => {
 
     if (subscriptions.length === 0) {
         return (
-            <div className="p-6">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+            <div className="p-4 md:p-6">
+                <h1 className="text-3xl font-bold text-foreground mb-6">
                     My Clubs
                 </h1>
-                <div className="text-center py-12">
-                    <p className="text-muted-foreground text-lg">You haven't subscribed to any clubs yet.</p>
-                    <p className="text-muted-foreground mt-2">Visit the "All Clubs" page to subscribe!</p>
-                </div>
+                <Card className="border-border">
+                    <CardContent className="py-12 text-center">
+                        <p className="text-muted-foreground text-lg">You haven't subscribed to any clubs yet.</p>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-4 md:p-6 space-y-6">
             <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-foreground">
                     My Clubs
                 </h1>
-                <p className="text-muted-foreground mt-2">View events and attendance from your subscribed clubs</p>
+                <p className="text-muted-foreground mt-1">Events from your subscribed clubs</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
                 {subscriptions.map((subscription) => {
                     const club = subscription.club;
-                    const isExpanded = expandedClubId === club.id;
-                    const events = clubsWithEvents[club.id] || [];
+                    const events = clubEvents[club.id] || [];
 
                     return (
-                        <Card key={club.id} className="overflow-hidden">
-                            <CardHeader
-                                className="cursor-pointer hover:bg-accent transition-colors"
-                                onClick={() => toggleClub(club.id)}
-                            >
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <CardTitle className="text-xl">{club.club_name}</CardTitle>
-                                        <CardDescription className="mt-2">
-                                            <Badge variant="outline">{club.club_code}</Badge>
-                                        </CardDescription>
-                                    </div>
-                                    <span className="text-2xl transition-transform duration-200" style={{
-                                        transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
-                                    }}>
-                                        ▼
-                                    </span>
-                                </div>
-                            </CardHeader>
+                        <div key={club.id} className="space-y-3">
+                            <div className="flex items-center gap-3">
+                                <h2 className="text-xl font-semibold text-foreground">{club.club_name}</h2>
+                                <Badge variant="outline">{club.club_code}</Badge>
+                            </div>
 
-                            {isExpanded && (
-                                <CardContent className="pt-4 border-t">
-                                    {events.length === 0 ? (
-                                        <p className="text-muted-foreground text-center py-4">
+                            {events.length === 0 ? (
+                                <Card className="border-border">
+                                    <CardContent className="py-8 text-center">
+                                        <p className="text-muted-foreground">
                                             No events for this club yet.
                                         </p>
-                                    ) : (
-                                        <div className="space-y-3">
-                                            {events.map((event) => {
-                                                const status = getAttendanceStatus(event);
-                                                return (
-                                                    <div
-                                                        key={event.id}
-                                                        className="p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                                                    >
-                                                        <div className="flex items-start justify-between">
-                                                            <div className="flex-1">
-                                                                <h3 className="font-semibold">{event.title}</h3>
-                                                                <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                                                                    <p className="flex items-center gap-2">
-                                                                        <span>📅</span>
-                                                                        {formatDate(event.start_time)}
-                                                                    </p>
-                                                                    <p className="flex items-center gap-2">
-                                                                        <span>📍</span>
-                                                                        {event.venue}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                            <div>
-                                                                {status === 'present' && (
-                                                                    <Badge variant="success">Present</Badge>
-                                                                )}
-                                                                {status === 'absent' && (
-                                                                    <Badge variant="destructive">Absent</Badge>
-                                                                )}
-                                                                {status === 'unknown' && (
-                                                                    <Badge variant="outline">Not Marked</Badge>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-                                </CardContent>
+                                    </CardContent>
+                                </Card>
+                            ) : (
+                                <div className="space-y-3">
+                                    {events.map((event) => (
+                                        <Card key={event.id} className="border-border hover:bg-secondary/50 transition-colors">
+                                            <CardHeader className="pb-3">
+                                                <CardTitle className="text-lg text-foreground">
+                                                    {event.title}
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="space-y-2 pt-0">
+                                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                    <span>📅</span>
+                                                    <span>{formatDate(event.start_time)}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                    <span>📍</span>
+                                                    <span>{event.venue}</span>
+                                                </div>
+                                                {event.description && (
+                                                    <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
+                                                        {event.description}
+                                                    </p>
+                                                )}
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
                             )}
-                        </Card>
+                        </div>
                     );
                 })}
             </div>

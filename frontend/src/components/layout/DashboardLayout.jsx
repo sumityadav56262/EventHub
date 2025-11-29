@@ -2,17 +2,16 @@ import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
 import { useState } from 'react';
+import BottomNav from './BottomNav';
 
 const Sidebar = () => {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
 
     const menuItems = [
-        { path: '/student/dashboard', label: 'Dashboard', icon: '📊' },
-        { path: '/student/events', label: 'Upcoming Events', icon: '📅' },
-        { path: '/student/clubs', label: 'All Clubs', icon: '🎭' },
+        { path: '/student/dashboard', label: 'Home', icon: '🏠' },
         { path: '/student/my-clubs', label: 'My Clubs', icon: '⭐' },
-        { path: '/student/attendance-scan', label: 'Scan QR', icon: '📷' },
+        { path: '/student/qr-scanner', label: 'QR Scanner', icon: '📷' },
         { path: '/student/profile', label: 'Profile', icon: '👤' },
     ];
 
@@ -23,19 +22,18 @@ const Sidebar = () => {
             {/* Mobile menu button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-primary text-primary-foreground"
+                className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-secondary text-foreground"
             >
                 {isOpen ? '✕' : '☰'}
             </button>
 
-            {/* Sidebar */}
+            {/* Sidebar - Desktop only */}
             <aside
-                className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-card border-r transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-                    }`}
+                className={`hidden lg:block fixed inset-y-0 left-0 z-40 w-64 bg-card border-r border-border`}
             >
                 <div className="h-full flex flex-col">
-                    <div className="p-6 border-b">
-                        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <div className="p-6 border-b border-border">
+                        <h2 className="text-2xl font-bold text-primary">
                             Event Hub
                         </h2>
                         <p className="text-sm text-muted-foreground mt-1">Student Portal</p>
@@ -46,10 +44,9 @@ const Sidebar = () => {
                             <Link
                                 key={item.path}
                                 to={item.path}
-                                onClick={() => setIsOpen(false)}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive(item.path)
-                                        ? 'bg-primary text-primary-foreground shadow-md'
-                                        : 'hover:bg-accent hover:text-accent-foreground'
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'hover:bg-secondary'
                                     }`}
                             >
                                 <span className="text-xl">{item.icon}</span>
@@ -59,14 +56,6 @@ const Sidebar = () => {
                     </nav>
                 </div>
             </aside>
-
-            {/* Overlay for mobile */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-                    onClick={() => setIsOpen(false)}
-                />
-            )}
         </>
     );
 };
@@ -76,19 +65,19 @@ const Navbar = () => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     return (
-        <header className="bg-card border-b px-6 py-4">
+        <header className="bg-card border-b border-border px-6 py-4">
             <div className="flex items-center justify-between">
                 <div className="lg:ml-0 ml-12">
-                    <h1 className="text-xl font-semibold">Welcome back, {user?.name || 'Student'}!</h1>
+                    <h1 className="text-xl font-semibold">Welcome, {user?.name || 'Student'}!</h1>
                     <p className="text-sm text-muted-foreground">Manage your events and clubs</p>
                 </div>
 
                 <div className="relative">
                     <button
                         onClick={() => setShowDropdown(!showDropdown)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-accent transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
                     >
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-semibold">
+                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
                             {user?.name?.charAt(0) || 'S'}
                         </div>
                         <span className="hidden md:inline">{user?.name || 'Student'}</span>
@@ -96,10 +85,10 @@ const Navbar = () => {
                     </button>
 
                     {showDropdown && (
-                        <div className="absolute right-0 mt-2 w-48 bg-card border rounded-lg shadow-lg py-2 z-50">
+                        <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-2 z-50">
                             <Link
                                 to="/student/profile"
-                                className="block px-4 py-2 hover:bg-accent transition-colors"
+                                className="block px-4 py-2 hover:bg-secondary transition-colors"
                                 onClick={() => setShowDropdown(false)}
                             >
                                 Profile
@@ -109,7 +98,7 @@ const Navbar = () => {
                                     logout();
                                     setShowDropdown(false);
                                 }}
-                                className="w-full text-left px-4 py-2 hover:bg-accent transition-colors text-destructive"
+                                className="w-full text-left px-4 py-2 hover:bg-secondary transition-colors text-destructive"
                             >
                                 Logout
                             </button>
@@ -125,11 +114,12 @@ const DashboardLayout = () => {
     return (
         <div className="flex h-screen overflow-hidden">
             <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-hidden lg:ml-64">
                 <Navbar />
-                <main className="flex-1 overflow-y-auto bg-background">
+                <main className="flex-1 overflow-y-auto bg-background pb-20 lg:pb-0">
                     <Outlet />
                 </main>
+                <BottomNav />
             </div>
         </div>
     );

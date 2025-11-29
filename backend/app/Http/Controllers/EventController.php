@@ -42,6 +42,36 @@ class EventController extends Controller
         return response()->json(['message' => 'Event created successfully', 'event' => $event], 201);
     }
 
+    public function upcoming()
+    {
+        $events = Event::with('club')
+            ->where('start_time', '>=', now())
+            ->orderBy('start_time', 'asc')
+            ->get();
+        
+        return response()->json($events);
+    }
+
+    public function show($id)
+    {
+        $event = Event::with('club')->find($id);
+
+        if (!$event) {
+            return response()->json(['message' => 'Event not found'], 404);
+        }
+
+        return response()->json($event);
+    }
+
+    public function getClubEvents($club_id)
+    {
+        $events = Event::where('club_id', $club_id)
+            ->orderBy('start_time', 'desc')
+            ->get();
+        
+        return response()->json($events);
+    }
+
     public function index($club_id)
     {
         $events = Event::where('club_id', $club_id)->get();

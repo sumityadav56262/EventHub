@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\StudentController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -27,11 +28,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/clubs/subscribe/{club_id}', [ClubController::class, 'subscribe']);
 
     // Event Routes
+    Route::get('/events/upcoming', [EventController::class, 'upcoming']);
+    Route::get('/events/{id}', [EventController::class, 'show']);
     Route::post('/events/create', [EventController::class, 'store']);
-    Route::get('/events/club/{club_id}', [EventController::class, 'index']);
+    Route::get('/events/club/{club_id}', [EventController::class, 'getClubEvents']);
+
+    // Student Routes
+    Route::get('/student/profile', [StudentController::class, 'getProfile']);
+    Route::put('/student/profile', [StudentController::class, 'updateProfile']);
+    Route::get('/student/subscriptions', [StudentController::class, 'getSubscriptions']);
 
     // Attendance Routes
     Route::get('/attendance/qr/{event_id}', [AttendanceController::class, 'generateQr']);
     Route::post('/attendance/mark', [AttendanceController::class, 'markAttendance']);
     Route::get('/attendance/live/{event_id}', [AttendanceController::class, 'liveAttendance']);
+    Route::get('/attendance/event/{event_id}', [AttendanceController::class, 'getEventAttendance']);
 });

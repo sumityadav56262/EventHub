@@ -117,4 +117,28 @@ class AttendanceController extends Controller
 
         return response()->json($attendances);
     }
+
+    public function getEventAttendance($event_id)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'student') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $student = $user->student;
+
+        $attendance = Attendance::where('event_id', $event_id)
+            ->where('student_id', $student->id)
+            ->first();
+
+        if (!$attendance) {
+            return response()->json(['status' => 'not_marked'], 200);
+        }
+
+        return response()->json([
+            'status' => $attendance->status,
+            'marked_at' => $attendance->created_at,
+        ]);
+    }
 }

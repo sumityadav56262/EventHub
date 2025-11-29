@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 
@@ -15,22 +15,20 @@ const EventCard = ({ event, onSubscribeClub, isSubscribed }) => {
     };
 
     return (
-        <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-primary">
-            <CardHeader>
-                <div className="flex items-start justify-between">
+        <Card className="hover:bg-secondary/50 transition-all duration-200 border-border">
+            <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                        <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                        <CardTitle className="text-lg text-foreground mb-2">
                             {event.title}
                         </CardTitle>
-                        <CardDescription className="mt-2">
-                            <Badge variant="outline" className="font-mono">
-                                {event.club?.club_name || 'Unknown Club'}
-                            </Badge>
-                        </CardDescription>
+                        <Badge variant="outline" className="text-xs">
+                            {event.club?.club_name || 'Unknown Club'}
+                        </Badge>
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 pt-0">
                 <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                         <span>📅</span>
@@ -51,7 +49,7 @@ const EventCard = ({ event, onSubscribeClub, isSubscribed }) => {
                     <Button
                         onClick={() => onSubscribeClub(event.club_id)}
                         variant="outline"
-                        className="w-full mt-4"
+                        className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                     >
                         Subscribe to Club
                     </Button>

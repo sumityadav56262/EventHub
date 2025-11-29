@@ -9,11 +9,9 @@ import TeacherSignup from './pages/auth/TeacherSignup';
 // Student Dashboard
 import DashboardLayout from './components/layout/DashboardLayout';
 import StudentDashboardHome from './pages/student/StudentDashboardHome';
-import UpcomingEvents from './pages/student/UpcomingEvents';
-import ClubList from './pages/student/ClubList';
 import MyClubs from './pages/student/MyClubs';
 import StudentProfile from './pages/student/StudentProfile';
-import AttendanceScanner from './pages/student/AttendanceScanner';
+import QRScannerPage from './pages/student/QRScannerPage';
 
 // Club Pages
 import ClubDashboard from './pages/club/ClubDashboard';
@@ -39,11 +37,9 @@ function App() {
                 <Route path="/student" element={<DashboardLayout />}>
                     <Route index element={<StudentDashboardHome />} />
                     <Route path="dashboard" element={<StudentDashboardHome />} />
-                    <Route path="events" element={<UpcomingEvents />} />
-                    <Route path="clubs" element={<ClubList />} />
                     <Route path="my-clubs" element={<MyClubs />} />
+                    <Route path="qr-scanner" element={<QRScannerPage />} />
                     <Route path="profile" element={<StudentProfile />} />
-                    <Route path="attendance-scan" element={<AttendanceScanner />} />
                 </Route>
             </Route>
 

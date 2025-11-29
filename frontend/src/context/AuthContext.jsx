@@ -50,7 +50,20 @@ export const AuthProvider = ({ children }) => {
             return { success: true, role: user.role };
         } catch (error) {
             console.error("Login failed", error);
-            return { success: false, error: error.response?.data?.message || 'Login failed' };
+
+            // Extract error message from Laravel validation errors
+            let errorMessage = 'Login failed';
+
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.response?.data?.errors) {
+                // Laravel validation errors are in errors object
+                const errors = error.response.data.errors;
+                const firstError = Object.values(errors)[0];
+                errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+            }
+
+            return { success: false, error: errorMessage };
         }
     };
 

@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { getProfile, updateProfile } from '../../api/student';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Button } from '../../components/ui/button';
-import { Alert, AlertDescription } from '../../components/ui/alert';
 import toast from 'react-hot-toast';
 
 const StudentProfile = () => {
@@ -81,18 +80,17 @@ const StudentProfile = () => {
     }
 
     return (
-        <div className="p-6 max-w-4xl mx-auto">
+        <div className="p-4 md:p-6 max-w-4xl mx-auto">
             <div className="mb-6">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-foreground">
                     My Profile
                 </h1>
-                <p className="text-muted-foreground mt-2">Manage your personal information</p>
+                <p className="text-muted-foreground mt-1">Manage your personal information</p>
             </div>
 
-            <Card className="shadow-lg">
+            <Card className="border-border">
                 <CardHeader>
                     <CardTitle>Personal Information</CardTitle>
-                    <CardDescription>Update your profile details below</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -106,6 +104,7 @@ const StudentProfile = () => {
                                     value={formData.name}
                                     onChange={handleChange}
                                     required
+                                    className="bg-secondary border-border"
                                 />
                             </div>
 
@@ -119,7 +118,7 @@ const StudentProfile = () => {
                                     onChange={handleChange}
                                     required
                                     disabled
-                                    className="bg-muted"
+                                    className="bg-muted border-border"
                                 />
                             </div>
                         </div>
@@ -134,7 +133,7 @@ const StudentProfile = () => {
                                 onChange={handleChange}
                                 required
                                 disabled
-                                className="bg-muted"
+                                className="bg-muted border-border"
                             />
                         </div>
 
@@ -144,7 +143,7 @@ const StudentProfile = () => {
                                 <select
                                     id="programme"
                                     name="programme"
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    className="flex h-10 w-full rounded-md border border-border bg-secondary px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                     value={formData.programme}
                                     onChange={handleChange}
                                 >
@@ -159,7 +158,7 @@ const StudentProfile = () => {
                                 <select
                                     id="course"
                                     name="course"
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    className="flex h-10 w-full rounded-md border border-border bg-secondary px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                     value={formData.course}
                                     onChange={handleChange}
                                 >
@@ -184,6 +183,7 @@ const StudentProfile = () => {
                                     value={formData.section}
                                     onChange={handleChange}
                                     required
+                                    className="bg-secondary border-border"
                                 />
                             </div>
 
@@ -192,7 +192,7 @@ const StudentProfile = () => {
                                 <select
                                     id="specialization"
                                     name="specialization"
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    className="flex h-10 w-full rounded-md border border-border bg-secondary px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                     value={formData.specialization}
                                     onChange={handleChange}
                                 >
@@ -207,7 +207,7 @@ const StudentProfile = () => {
                         <div className="pt-4">
                             <Button
                                 type="submit"
-                                className="w-full md:w-auto gradient-primary hover:opacity-90 transition-all duration-200"
+                                className="w-full md:w-auto bg-primary hover:bg-primary/90"
                                 disabled={saving}
                             >
                                 {saving ? 'Saving...' : 'Save Changes'}
