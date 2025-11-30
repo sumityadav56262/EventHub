@@ -24,6 +24,7 @@ return [
         'http://127.0.0.1:5173',
         'http://localhost:3000',
         'http://30.30.15.253:3000',
+        'https://clicktosee.in'
     ],
 
     'allowed_origins_patterns' => [],
