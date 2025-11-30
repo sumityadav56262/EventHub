@@ -22,8 +22,17 @@ export const subscribeToClub = async (clubId) => {
     return response.data;
 };
 
+// Get events for a specific club (with optional pagination)
+export const getClubEvents = async (clubId, page = 1, perPage = 10) => {
+    const response = await api.get(`/clubs/${clubId}/events`, {
+        params: { page, per_page: perPage }
+    });
+    return response.data;
+};
+
 export default {
     getAllClubs,
     getClubDetails,
     subscribeToClub,
+    getClubEvents,
 };

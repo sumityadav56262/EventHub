@@ -1,10 +1,22 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 
 const ClubCard = ({ club, onSubscribe, isSubscribed, loading }) => {
+    const navigate = useNavigate();
+
+    const handleCardClick = (e) => {
+        // Don't navigate if clicking the button
+        if (e.target.closest('button')) return;
+        navigate(`/student/clubs/${club.id}`);
+    };
+
     return (
-        <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-primary">
+        <Card
+            className="group hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-primary cursor-pointer"
+            onClick={handleCardClick}
+        >
             <CardHeader>
                 <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -33,10 +45,13 @@ const ClubCard = ({ club, onSubscribe, isSubscribed, loading }) => {
                     )}
                 </div>
                 <Button
-                    onClick={() => onSubscribe(club.id)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onSubscribe(club.id);
+                    }}
                     className={`w-full transition-all duration-200 ${isSubscribed
-                            ? 'bg-secondary hover:bg-secondary/80'
-                            : 'gradient-primary hover:opacity-90'
+                        ? 'bg-destructive hover:bg-destructive/90'
+                        : 'gradient-primary hover:opacity-90'
                         }`}
                     disabled={loading}
                 >
@@ -48,3 +63,4 @@ const ClubCard = ({ club, onSubscribe, isSubscribed, loading }) => {
 };
 
 export default ClubCard;
+

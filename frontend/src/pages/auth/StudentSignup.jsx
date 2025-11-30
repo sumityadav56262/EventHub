@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+
 import api from '../../api/axios';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Alert, AlertDescription } from '../../components/ui/alert';
+import { Eye, EyeOff } from 'lucide-react';
 
 const StudentSignup = () => {
     const navigate = useNavigate();
@@ -20,6 +22,8 @@ const StudentSignup = () => {
         password: '',
         password_confirmation: ''
     });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -48,18 +52,18 @@ const StudentSignup = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center gradient-mesh p-4">
+        <div className="min-h-screen flex items-center justify-center gradient-mesh p-4 py-8">
             <div className="w-full max-w-2xl animate-fade-in">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                         Student Registration
                     </h1>
                     <p className="text-muted-foreground mt-2">Join Event Hub as a student</p>
                 </div>
 
                 <Card className="shadow-2xl border-0 backdrop-blur-sm bg-white/90">
-                    <CardHeader>
-                        <CardTitle>Create Your Account</CardTitle>
+                    <CardHeader className="space-y-1">
+                        <CardTitle className="text-2xl font-bold">Create Your Account</CardTitle>
                         <CardDescription>Fill in your details to get started</CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -75,6 +79,7 @@ const StudentSignup = () => {
                                         value={formData.name}
                                         onChange={handleChange}
                                         required
+                                        className="transition-all duration-200 focus:scale-[1.01]"
                                     />
                                 </div>
 
@@ -88,6 +93,7 @@ const StudentSignup = () => {
                                         value={formData.QID}
                                         onChange={handleChange}
                                         required
+                                        className="transition-all duration-200 focus:scale-[1.01]"
                                     />
                                 </div>
                             </div>
@@ -102,6 +108,7 @@ const StudentSignup = () => {
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
+                                    className="transition-all duration-200 focus:scale-[1.01]"
                                 />
                             </div>
 
@@ -111,7 +118,7 @@ const StudentSignup = () => {
                                     <select
                                         id="programme"
                                         name="programme"
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200 focus:scale-[1.01]"
                                         value={formData.programme}
                                         onChange={handleChange}
                                     >
@@ -126,7 +133,7 @@ const StudentSignup = () => {
                                     <select
                                         id="course"
                                         name="course"
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200 focus:scale-[1.01]"
                                         value={formData.course}
                                         onChange={handleChange}
                                     >
@@ -152,6 +159,7 @@ const StudentSignup = () => {
                                         value={formData.section}
                                         onChange={handleChange}
                                         required
+                                        className="transition-all duration-200 focus:scale-[1.01]"
                                     />
                                 </div>
 
@@ -160,7 +168,7 @@ const StudentSignup = () => {
                                     <select
                                         id="specialization"
                                         name="specialization"
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200 focus:scale-[1.01]"
                                         value={formData.specialization}
                                         onChange={handleChange}
                                     >
@@ -175,28 +183,48 @@ const StudentSignup = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="password">Password</Label>
-                                    <Input
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                    <div className="relative">
+                                        <Input
+                                            id="password"
+                                            name="password"
+                                            type={showPassword ? "text" : "password"}
+                                            placeholder="••••••••"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            required
+                                            className="transition-all duration-200 focus:scale-[1.01] pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="password_confirmation">Confirm Password</Label>
-                                    <Input
-                                        id="password_confirmation"
-                                        name="password_confirmation"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        value={formData.password_confirmation}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                    <div className="relative">
+                                        <Input
+                                            id="password_confirmation"
+                                            name="password_confirmation"
+                                            type={showConfirmPassword ? "text" : "password"}
+                                            placeholder="••••••••"
+                                            value={formData.password_confirmation}
+                                            onChange={handleChange}
+                                            required
+                                            className="transition-all duration-200 focus:scale-[1.01] pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -208,7 +236,7 @@ const StudentSignup = () => {
 
                             <Button
                                 type="submit"
-                                className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:opacity-90 transition-all duration-200 hover:scale-[1.02]"
+                                className="w-full gradient-primary hover:opacity-90 transition-all duration-200 hover:scale-[1.02]"
                                 disabled={loading}
                             >
                                 {loading ? 'Creating Account...' : 'Sign Up'}
@@ -216,7 +244,7 @@ const StudentSignup = () => {
 
                             <div className="text-center text-sm">
                                 <span className="text-muted-foreground">Already have an account? </span>
-                                <Link to="/login" className="text-primary font-medium hover:underline">
+                                <Link to="/login" className="text-primary font-medium hover:underline transition-colors">
                                     Sign in
                                 </Link>
                             </div>

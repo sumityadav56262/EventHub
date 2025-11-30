@@ -1,8 +1,12 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { Calendar, MapPin } from 'lucide-react';
 
 const EventCard = ({ event, onSubscribeClub, isSubscribed }) => {
+    const navigate = useNavigate();
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
@@ -14,12 +18,21 @@ const EventCard = ({ event, onSubscribeClub, isSubscribed }) => {
         });
     };
 
+    const handleCardClick = (e) => {
+        // Don't navigate if clicking the button
+        if (e.target.closest('button')) return;
+        navigate(`/student/events/${event.id}`);
+    };
+
     return (
-        <Card className="hover:bg-secondary/50 transition-all duration-200 border-border">
+        <Card
+            className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-2 hover:border-primary cursor-pointer"
+            onClick={handleCardClick}
+        >
             <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                        <CardTitle className="text-lg text-foreground mb-2">
+                        <CardTitle className="text-lg text-foreground mb-2 hover:text-primary transition-colors">
                             {event.title}
                         </CardTitle>
                         <Badge variant="outline" className="text-xs">
@@ -31,11 +44,11 @@ const EventCard = ({ event, onSubscribeClub, isSubscribed }) => {
             <CardContent className="space-y-3 pt-0">
                 <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
-                        <span>📅</span>
+                        <Calendar size={16} />
                         <span>{formatDate(event.start_time)}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                        <span>📍</span>
+                        <MapPin size={16} />
                         <span>{event.venue}</span>
                     </div>
                     {event.description && (
@@ -47,7 +60,10 @@ const EventCard = ({ event, onSubscribeClub, isSubscribed }) => {
 
                 {!isSubscribed && onSubscribeClub && (
                     <Button
-                        onClick={() => onSubscribeClub(event.club_id)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onSubscribeClub(event.club_id);
+                        }}
                         variant="outline"
                         className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                     >
@@ -60,3 +76,4 @@ const EventCard = ({ event, onSubscribeClub, isSubscribed }) => {
 };
 
 export default EventCard;
+

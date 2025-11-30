@@ -45,7 +45,7 @@ const AttendanceScanner = () => {
             setScanning(true);
         } catch (err) {
             console.error('Error starting scanner:', err);
-            setError('Failed to start camera. Please check permissions.');
+            setError('Failed to start camera. Please ensure you have granted camera permissions and are using HTTPS (or localhost).');
         }
     };
 

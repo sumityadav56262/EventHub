@@ -56,7 +56,7 @@ const QRScannerPage = () => {
             setScanning(true);
         } catch (err) {
             console.error('Error starting scanner:', err);
-            toast.error('Failed to start camera. Please check permissions.');
+            toast.error('Failed to start camera. Please ensure you have granted camera permissions and are using HTTPS.');
         }
     };
 
@@ -120,8 +120,8 @@ const QRScannerPage = () => {
                 <button
                     onClick={() => setActiveTab('scan')}
                     className={`px-6 py-3 font-medium transition-colors relative ${activeTab === 'scan'
-                            ? 'text-primary'
-                            : 'text-muted-foreground hover:text-foreground'
+                        ? 'text-primary'
+                        : 'text-muted-foreground hover:text-foreground'
                         }`}
                 >
                     Scan QR
@@ -132,8 +132,8 @@ const QRScannerPage = () => {
                 <button
                     onClick={() => setActiveTab('history')}
                     className={`px-6 py-3 font-medium transition-colors relative ${activeTab === 'history'
-                            ? 'text-primary'
-                            : 'text-muted-foreground hover:text-foreground'
+                        ? 'text-primary'
+                        : 'text-muted-foreground hover:text-foreground'
                         }`}
                 >
                     Attendance History

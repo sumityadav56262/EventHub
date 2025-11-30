@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AttendanceController extends Controller
 {
@@ -24,30 +23,21 @@ class AttendanceController extends Controller
              return response()->json(['message' => 'Unauthorized'], 403);
         }
 
+        // Generate a new token
         $tokenString = Str::random(32);
         
+        // Create token record with 20 seconds expiry (giving a bit of buffer over 15s)
         $token = AttendanceToken::create([
             'event_id' => $event_id,
             'token' => $tokenString,
-            'expires_at' => Carbon::now()->addSeconds(15),
+            'expires_at' => Carbon::now()->addSeconds(20),
         ]);
 
-        $payload = [
-            'event_id' => $event_id,
-            'token' => $tokenString,
-        ];
-
-        // Generate QR Code SVG
-        // Note: In a real API we might just return the payload and let frontend generate QR, 
-        // but user asked for backend generation. 
-        // However, usually API returns JSON. The prompt says "Response returns JSON... QR payload must include...".
-        // It also says "Use Simple-QrCode". 
-        // I will return the JSON payload as requested in point 6.
-        
+        // Return JSON payload as requested
         return response()->json([
-            'event_id' => $event_id,
+            'event_id' => (int)$event_id,
             'token' => $tokenString,
-            'expires_at' => $token->expires_at,
+            'expires_at' => $token->expires_at->toIso8601String(),
         ]);
     }
 
@@ -79,8 +69,15 @@ class AttendanceController extends Controller
             return response()->json(['message' => 'Token expired'], 400);
         }
 
-        // 2. Check Subscription
+        // 2. Check Event Status & Timing
         $event = Event::findOrFail($request->event_id);
+        
+        // Optional: Check if event is actually happening now
+        // if (Carbon::now()->lt($event->start_time) || Carbon::now()->gt($event->end_time)) {
+        //    return response()->json(['message' => 'Event is not active'], 400);
+        // }
+
+        // 3. Check Subscription
         $isSubscribed = Subscription::where('student_id', $student->id)
             ->where('club_id', $event->club_id)
             ->exists();
@@ -89,7 +86,7 @@ class AttendanceController extends Controller
             return response()->json(['message' => 'You must be subscribed to the club to mark attendance'], 403);
         }
 
-        // 3. Mark Attendance
+        // 4. Mark Attendance
         // Check if already marked
         $existing = Attendance::where('student_id', $student->id)
             ->where('event_id', $request->event_id)
@@ -117,9 +114,10 @@ class AttendanceController extends Controller
             ->get();
 
         // Format the response for better frontend consumption
-        $formattedAttendances = $attendances->map(function ($attendance) {
+        $formattedAttendances = $attendances->map(function ($attendance, $index) {
             return [
                 'id' => $attendance->id,
+                's_no' => $index + 1, // Add S.No
                 'name' => $attendance->student->name,
                 'qid' => $attendance->student->QID,
                 'course' => $attendance->student->course,

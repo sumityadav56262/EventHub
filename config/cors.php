@@ -23,6 +23,7 @@ return [
         'http://localhost:5173',
         'http://127.0.0.1:5173',
         'http://localhost:3000',
+        'http://30.30.15.253:3000',
     ],
 
     'allowed_origins_patterns' => [],

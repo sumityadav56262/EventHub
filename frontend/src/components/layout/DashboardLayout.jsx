@@ -3,30 +3,23 @@ import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
 import { useState } from 'react';
 import BottomNav from './BottomNav';
+import { Home, Star, Camera, User } from 'lucide-react';
 
 const Sidebar = () => {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
 
     const menuItems = [
-        { path: '/student/dashboard', label: 'Home', icon: '🏠' },
-        { path: '/student/my-clubs', label: 'My Clubs', icon: '⭐' },
-        { path: '/student/qr-scanner', label: 'QR Scanner', icon: '📷' },
-        { path: '/student/profile', label: 'Profile', icon: '👤' },
+        { path: '/student/dashboard', label: 'Home', icon: <Home size={24} /> },
+        { path: '/student/my-clubs', label: 'My Clubs', icon: <Star size={24} /> },
+        { path: '/student/qr-scanner', label: 'QR Scanner', icon: <Camera size={24} /> },
+        { path: '/student/profile', label: 'Profile', icon: <User size={24} /> },
     ];
 
     const isActive = (path) => location.pathname === path;
 
     return (
         <>
-            {/* Mobile menu button */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-secondary text-foreground"
-            >
-                {isOpen ? '✕' : '☰'}
-            </button>
-
             {/* Sidebar - Desktop only */}
             <aside
                 className={`hidden lg:block fixed inset-y-0 left-0 z-40 w-64 bg-card border-r border-border`}

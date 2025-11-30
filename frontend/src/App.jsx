@@ -8,16 +8,19 @@ import TeacherSignup from './pages/auth/TeacherSignup';
 
 // Student Dashboard
 import DashboardLayout from './components/layout/DashboardLayout';
-import StudentDashboardHome from './pages/student/StudentDashboardHome';
+import StudentDashboard from './pages/student/StudentDashboard';
 import MyClubs from './pages/student/MyClubs';
 import StudentProfile from './pages/student/StudentProfile';
 import QRScannerPage from './pages/student/QRScannerPage';
+import ClubDetailPage from './pages/student/ClubDetailPage';
+import EventDetailPage from './pages/student/EventDetailPage';
 
 // Club Pages
 import ClubDashboard from './pages/club/ClubDashboard';
 import CreateEvent from './pages/club/CreateEvent';
 import EventQR from './pages/club/EventQR';
 import LiveAttendance from './pages/club/LiveAttendance';
+import ClubEventDashboard from './pages/club/ClubEventDashboard';
 
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
@@ -35,20 +38,22 @@ function App() {
             {/* Student Routes */}
             <Route element={<ProtectedRoute allowedRoles={['student']} />}>
                 <Route path="/student" element={<DashboardLayout />}>
-                    <Route index element={<StudentDashboardHome />} />
-                    <Route path="dashboard" element={<StudentDashboardHome />} />
+                    <Route index element={<StudentDashboard />} />
+                    <Route path="dashboard" element={<StudentDashboard />} />
                     <Route path="my-clubs" element={<MyClubs />} />
                     <Route path="qr-scanner" element={<QRScannerPage />} />
                     <Route path="profile" element={<StudentProfile />} />
                 </Route>
+                {/* Detail pages outside DashboardLayout for full-width */}
+                <Route path="/student/clubs/:clubId" element={<DashboardLayout><ClubDetailPage /></DashboardLayout>} />
+                <Route path="/student/events/:eventId" element={<DashboardLayout><EventDetailPage /></DashboardLayout>} />
             </Route>
 
             {/* Club Routes */}
             <Route element={<ProtectedRoute allowedRoles={['club']} />}>
                 <Route path="/club/dashboard" element={<ClubDashboard />} />
                 <Route path="/club/create-event" element={<CreateEvent />} />
-                <Route path="/club/events/:eventId/qr" element={<EventQR />} />
-                <Route path="/club/events/:eventId/attendance" element={<LiveAttendance />} />
+                <Route path="/club/events/:eventId" element={<ClubEventDashboard />} />
             </Route>
 
             {/* Teacher Routes */}

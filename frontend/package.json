@@ -23,12 +23,14 @@
     "react-qr-code": "^2.0.12",
     "react-qr-reader": "^3.0.0-beta-1",
     "react-router-dom": "^6.22.3",
+    "react-to-print": "^3.2.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
+    "@vitejs/plugin-basic-ssl": "^2.1.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.18",
     "eslint": "^8.57.0",
