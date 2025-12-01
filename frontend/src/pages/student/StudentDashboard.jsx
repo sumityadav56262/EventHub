@@ -13,8 +13,8 @@ const StudentDashboard = () => {
                     <button
                         onClick={() => setActiveTab('events')}
                         className={`px-6 py-4 font-semibold transition-all relative ${activeTab === 'events'
-                                ? 'text-primary'
-                                : 'text-muted-foreground hover:text-foreground'
+                            ? 'text-primary'
+                            : 'text-muted-foreground hover:text-foreground'
                             }`}
                     >
                         Upcoming Events
@@ -25,8 +25,8 @@ const StudentDashboard = () => {
                     <button
                         onClick={() => setActiveTab('clubs')}
                         className={`px-6 py-4 font-semibold transition-all relative ${activeTab === 'clubs'
-                                ? 'text-primary'
-                                : 'text-muted-foreground hover:text-foreground'
+                            ? 'text-primary'
+                            : 'text-muted-foreground hover:text-foreground'
                             }`}
                     >
                         Clubs

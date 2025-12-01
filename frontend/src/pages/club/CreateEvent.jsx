@@ -22,7 +22,7 @@ const CreateEvent = () => {
         setError('');
         try {
             await api.post('/events/create', formData);
-            navigate('/club/dashboard');
+            navigate('/club/home');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to create event');
         }

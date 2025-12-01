@@ -63,8 +63,10 @@ class EventController extends Controller
         return response()->json($event);
     }
 
-    public function getClubEvents($club_id)
+    public function getClubEvents()
     {
+        $user = Auth::user();
+        $club_id = Club::where('user_id', $user->id)->first()->id;
         $events = Event::where('club_id', $club_id)
             ->orderBy('start_time', 'desc')
             ->get();

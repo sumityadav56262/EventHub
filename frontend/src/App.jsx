@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
@@ -16,9 +16,12 @@ import ClubDetailPage from './pages/student/ClubDetailPage';
 import EventDetailPage from './pages/student/EventDetailPage';
 
 // Club Pages
-import ClubDashboard from './pages/club/ClubDashboard';
+import ClubLayout from './components/layout/ClubLayout';
+import ClubHome from './pages/club/ClubHome';
+import ClubEventList from './pages/club/ClubEventList';
+import ClubQRGenerator from './pages/club/ClubQRGenerator';
+import ClubProfile from './pages/club/ClubProfile';
 import CreateEvent from './pages/club/CreateEvent';
-import EventQR from './pages/club/EventQR';
 import LiveAttendance from './pages/club/LiveAttendance';
 import ClubEventDashboard from './pages/club/ClubEventDashboard';
 
@@ -51,9 +54,17 @@ function App() {
 
             {/* Club Routes */}
             <Route element={<ProtectedRoute allowedRoles={['club']} />}>
-                <Route path="/club/dashboard" element={<ClubDashboard />} />
-                <Route path="/club/create-event" element={<CreateEvent />} />
-                <Route path="/club/events/:eventId" element={<ClubEventDashboard />} />
+                <Route path="/club" element={<ClubLayout />}>
+                    <Route path="home" element={<ClubHome />} />
+                    <Route path="events" element={<ClubEventList />} />
+                    <Route path="qr-generator" element={<ClubQRGenerator />} />
+                    <Route path="profile" element={<ClubProfile />} />
+                    <Route path="create-event" element={<CreateEvent />} />
+                    {/* Redirect old dashboard route to new home route */}
+                    <Route path="dashboard" element={<Navigate to="/club/home" replace />} />
+                </Route>
+                {/* Full-width pages outside layout */}
+                <Route path="/club/events/:eventId" element={<LiveAttendance />} />
             </Route>
 
             {/* Teacher Routes */}

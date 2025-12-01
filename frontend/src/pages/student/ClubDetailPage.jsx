@@ -111,8 +111,8 @@ const ClubDetailPage = () => {
                             onClick={handleSubscribe}
                             disabled={subscribing}
                             className={`${subscribed
-                                    ? 'bg-destructive hover:bg-destructive/90'
-                                    : 'gradient-primary hover:opacity-90'
+                                ? 'bg-destructive hover:bg-destructive/90'
+                                : 'gradient-primary hover:opacity-90'
                                 } transition-all duration-200`}
                         >
                             {subscribing ? 'Processing...' : subscribed ? 'Unsubscribe' : 'Subscribe'}
@@ -168,7 +168,7 @@ const ClubDetailPage = () => {
                                         </div>
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                             <Calendar size={16} />
-                                            <span>{new Date(event.start_time).toLocaleDateString()}</span>
+                                            <span>{new Date(event.start_time.replace('Z', '').replace('.000000', '')).toLocaleDateString()}</span>
                                         </div>
                                     </CardContent>
                                 </Card>

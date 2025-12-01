@@ -24,7 +24,7 @@ const Login = () => {
             if (role === 'student') {
                 navigate('/student/dashboard', { replace: true });
             } else if (role === 'club') {
-                navigate('/club/dashboard', { replace: true });
+                navigate('/club/home', { replace: true });
             } else if (role === 'teacher') {
                 navigate('/teacher/dashboard', { replace: true });
             }
@@ -44,7 +44,7 @@ const Login = () => {
             if (role === 'student') {
                 navigate('/student/dashboard');
             } else if (role === 'club') {
-                navigate('/club/dashboard');
+                navigate('/club/home');
             } else if (role === 'teacher') {
                 navigate('/teacher/dashboard');
             } else {

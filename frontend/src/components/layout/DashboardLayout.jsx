@@ -58,11 +58,10 @@ const Navbar = () => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     return (
-        <header className="bg-card border-b border-border px-6 py-4">
+        <header className="bg-card border-b border-border px-6 py-2">
             <div className="flex items-center justify-between">
-                <div className="lg:ml-0 ml-12">
-                    <h1 className="text-xl font-semibold"><span className="text-primary">Event</span>Hub</h1>
-                    <p className="text-sm text-muted-foreground">Manage your events and clubs</p>
+                <div className="lg:ml-0 ml-2">
+                    <h1 className="text-2xl font-semibold"><span className="text-primary">Event</span>Hub</h1>
                 </div>
 
                 <div className="relative">

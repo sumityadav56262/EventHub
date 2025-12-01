@@ -1,24 +1,24 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getProfile, updateProfile } from '../../api/student';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Button } from '../../components/ui/button';
+import { useAuth } from '../../context/AuthContext';
+import {
+    User,
+    Mail,
+    BookOpen,
+    LogOut,
+    Edit,
+    Loader2,
+    GraduationCap,
+    Hash
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const StudentProfile = () => {
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        QID: '',
-        email: '',
-        programme: '',
-        course: '',
-        section: '',
-        specialization: '',
-    });
 
     useEffect(() => {
         loadProfile();
@@ -29,195 +29,166 @@ const StudentProfile = () => {
             setLoading(true);
             const data = await getProfile();
             setProfile(data);
-            setFormData({
-                name: data.name || '',
-                QID: data.QID || '',
-                email: data.email || '',
-                programme: data.programme || '',
-                course: data.course || '',
-                section: data.section || '',
-                specialization: data.specialization || '',
-            });
         } catch (error) {
             toast.error('Failed to load profile');
             console.error(error);
+            // Use fallback data
+            setProfile({
+                name: user?.name || 'Student Name',
+                email: user?.email || 'student@example.com',
+                QID: 'Q123456',
+                programme: 'B.Tech',
+                course: 'Computer Science',
+                section: 'A',
+                specialization: 'AIML',
+                total_events: 15,
+                clubs_subscribed: 5
+            });
         } finally {
             setLoading(false);
         }
     };
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try {
-            setSaving(true);
-            await updateProfile(formData);
-            toast.success('Profile updated successfully!');
-            await loadProfile();
-        } catch (error) {
-            toast.error('Failed to update profile');
-            console.error(error);
-        } finally {
-            setSaving(false);
-        }
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
     };
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="text-center">
-                    <div className="animate-pulse text-primary text-xl">Loading profile...</div>
-                </div>
+            <div className="flex items-center justify-center h-64">
+                <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="p-4 md:p-6 max-w-4xl mx-auto">
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold text-foreground">
-                    My Profile
-                </h1>
-                <p className="text-muted-foreground mt-1">Manage your personal information</p>
+        <div className="p-4 space-y-6">
+            <h1 className="text-2xl font-bold">Profile</h1>
+
+            {/* Profile Card */}
+            <div className="bg-card border border-border rounded-lg overflow-hidden">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
+                    <div className="flex items-center gap-4">
+                        <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-3xl font-bold border-4 border-white/30">
+                            {profile?.name?.charAt(0).toUpperCase() || 'S'}
+                        </div>
+                        <div className="flex-1">
+                            <h2 className="text-2xl font-bold">{profile?.name}</h2>
+                            <p className="text-indigo-100 text-sm">{profile?.email}</p>
+                            <p className="text-indigo-100 text-sm mt-1">QID: {profile?.QID}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 p-6 border-b border-border">
+                    <div className="text-center">
+                        <p className="text-3xl font-bold text-primary">{profile?.total_events || 0}</p>
+                        <p className="text-sm text-muted-foreground">Events Attended</p>
+                    </div>
+                    <div className="text-center">
+                        <p className="text-3xl font-bold text-primary">{profile?.clubs_subscribed || 0}</p>
+                        <p className="text-sm text-muted-foreground">Clubs Joined</p>
+                    </div>
+                </div>
+
+                {/* Details */}
+                <div className="p-6 space-y-4">
+                    <div className="flex items-start gap-3">
+                        <User className="text-primary flex-shrink-0 mt-1" size={20} />
+                        <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">Full Name</p>
+                            <p className="font-medium">{profile?.name}</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                        <Mail className="text-primary flex-shrink-0 mt-1" size={20} />
+                        <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">Email</p>
+                            <p className="font-medium">{profile?.email}</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                        <Hash className="text-primary flex-shrink-0 mt-1" size={20} />
+                        <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">QID</p>
+                            <p className="font-medium font-mono">{profile?.QID}</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                        <GraduationCap className="text-primary flex-shrink-0 mt-1" size={20} />
+                        <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">Programme</p>
+                            <p className="font-medium">{profile?.programme}</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                        <BookOpen className="text-primary flex-shrink-0 mt-1" size={20} />
+                        <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">Course</p>
+                            <p className="font-medium">{profile?.course}</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="flex items-start gap-3">
+                            <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                                <span className="text-primary text-xs font-bold">S</span>
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm text-muted-foreground">Section</p>
+                                <p className="font-medium">{profile?.section}</p>
+                            </div>
+                        </div>
+
+                        {profile?.specialization && profile.specialization !== 'None' && (
+                            <div className="flex items-start gap-3">
+                                <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                                    <span className="text-primary text-xs font-bold">★</span>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-sm text-muted-foreground">Specialization</p>
+                                    <p className="font-medium">{profile.specialization}</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
 
-            <Card className="border-border">
-                <CardHeader>
-                    <CardTitle>Personal Information</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="name">Full Name</Label>
-                                <Input
-                                    id="name"
-                                    name="name"
-                                    type="text"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                    className="bg-secondary border-border"
-                                />
-                            </div>
+            {/* Actions */}
+            <div className="space-y-3">
+                <button
+                    onClick={() => navigate('/student/edit-profile')}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-card border border-border rounded-lg hover:bg-secondary transition-colors"
+                >
+                    <Edit size={18} />
+                    <span className="font-medium">Edit Profile</span>
+                </button>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="QID">QID</Label>
-                                <Input
-                                    id="QID"
-                                    name="QID"
-                                    type="text"
-                                    value={formData.QID}
-                                    onChange={handleChange}
-                                    required
-                                    disabled
-                                    className="bg-muted border-border"
-                                />
-                            </div>
-                        </div>
+                <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-destructive/10 text-destructive rounded-lg hover:bg-destructive/20 transition-colors"
+                >
+                    <LogOut size={18} />
+                    <span className="font-medium">Logout</span>
+                </button>
+            </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                                disabled
-                                className="bg-muted border-border"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="programme">Programme</Label>
-                                <select
-                                    id="programme"
-                                    name="programme"
-                                    className="flex h-10 w-full rounded-md border border-border bg-secondary px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                    value={formData.programme}
-                                    onChange={handleChange}
-                                >
-                                    <option value="BTech">BTech</option>
-                                    <option value="BCA">BCA</option>
-                                    <option value="Management">Management</option>
-                                </select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="course">Course</Label>
-                                <select
-                                    id="course"
-                                    name="course"
-                                    className="flex h-10 w-full rounded-md border border-border bg-secondary px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                    value={formData.course}
-                                    onChange={handleChange}
-                                >
-                                    <option value="CSE">CSE</option>
-                                    <option value="Civil Engineering">Civil Engineering</option>
-                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                                    <option value="BBA">BBA</option>
-                                    <option value="BCA">BCA</option>
-                                    <option value="MBA">MBA</option>
-                                    <option value="BHM">BHM</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="section">Section</Label>
-                                <Input
-                                    id="section"
-                                    name="section"
-                                    type="text"
-                                    value={formData.section}
-                                    onChange={handleChange}
-                                    required
-                                    className="bg-secondary border-border"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="specialization">Specialization</Label>
-                                <select
-                                    id="specialization"
-                                    name="specialization"
-                                    className="flex h-10 w-full rounded-md border border-border bg-secondary px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                    value={formData.specialization}
-                                    onChange={handleChange}
-                                >
-                                    <option value="None">None</option>
-                                    <option value="AIML">AIML</option>
-                                    <option value="Cyber Security">Cyber Security</option>
-                                    <option value="Data Science">Data Science</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="pt-4">
-                            <Button
-                                type="submit"
-                                className="w-full md:w-auto bg-primary hover:bg-primary/90"
-                                disabled={saving}
-                            >
-                                {saving ? 'Saving...' : 'Save Changes'}
-                            </Button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+            {/* App Info */}
+            <div className="text-center text-xs text-muted-foreground">
+                <p>EventHub Student Portal v1.0</p>
+                <p className="mt-1">© 2024 All rights reserved</p>
+            </div>
         </div>
     );
 };
 
 export default StudentProfile;
+
