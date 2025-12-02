@@ -204,6 +204,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'club',
+            'status' => 'pending', // Clubs start as pending, need admin approval
         ]);
 
         Club::create([
@@ -217,9 +218,10 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Club registered successfully',
+            'message' => 'Club registered successfully. Awaiting admin approval.',
             'user' => $user,
             'token' => $token,
+            'status' => 'pending',
         ], 201);
     }
 }

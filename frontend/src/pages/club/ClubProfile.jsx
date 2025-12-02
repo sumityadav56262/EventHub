@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
+import ProfilePictureUpload from '../../components/profile/ProfilePictureUpload';
 import {
     User,
     Mail,
@@ -61,11 +62,14 @@ const ClubProfile = () => {
             <div className="bg-card border border-border rounded-lg overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
-                    <div className="flex items-center gap-4">
-                        <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-3xl font-bold border-4 border-white/30">
-                            {clubData?.name?.charAt(0).toUpperCase() || 'C'}
-                        </div>
-                        <div className="flex-1">
+                    <div className="flex flex-col md:flex-row items-center gap-6">
+                        <ProfilePictureUpload
+                            currentPicture={clubData?.profile_picture ? `${import.meta.env.VITE_API_BASE_URL?.replace('/api', '')}/storage/${clubData.profile_picture}` : null}
+                            onUploadSuccess={(url) => {
+                                setClubData({ ...clubData, profile_picture: url });
+                            }}
+                        />
+                        <div className="flex-1 text-center md:text-left">
                             <h2 className="text-2xl font-bold">{clubData?.name}</h2>
                             <p className="text-indigo-100 text-sm">{clubData?.email}</p>
                         </div>

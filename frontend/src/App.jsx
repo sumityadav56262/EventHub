@@ -28,6 +28,13 @@ import ClubEventDashboard from './pages/club/ClubEventDashboard';
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 
+// Admin Pages
+import AdminLayout from './components/layout/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import PendingClubs from './pages/admin/PendingClubs';
+import AllClubs from './pages/admin/AllClubs';
+import AllEvents from './pages/admin/AllEvents';
+
 function App() {
     return (
         <Routes>
@@ -70,6 +77,16 @@ function App() {
             {/* Teacher Routes */}
             <Route element={<ProtectedRoute allowedRoles={['teacher']} />}>
                 <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+            </Route>
+
+            {/* Admin Routes */}
+            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                <Route path="/admin" element={<AdminLayout />}>
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="pending-clubs" element={<PendingClubs />} />
+                    <Route path="clubs" element={<AllClubs />} />
+                    <Route path="events" element={<AllEvents />} />
+                </Route>
             </Route>
 
             {/* Default redirect */}

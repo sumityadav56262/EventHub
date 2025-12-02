@@ -7,6 +7,9 @@ use App\Http\Controllers\ClubController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -43,4 +46,28 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/attendance/mark', [AttendanceController::class, 'markAttendance']);
     Route::get('/attendance/live/{event_id}', [AttendanceController::class, 'liveAttendance']);
     Route::get('/attendance/event/{event_id}', [AttendanceController::class, 'getEventAttendance']);
+
+    // Profile Picture Routes
+    Route::post('/profile/picture', [ProfileController::class, 'uploadProfilePicture']);
+    Route::get('/profile/picture/{userId}', [ProfileController::class, 'getProfilePicture']);
+    Route::delete('/profile/picture', [ProfileController::class, 'deleteProfilePicture']);
+
+    // Notification Routes
+    Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'deleteNotification']);
+
+    // Admin Routes
+    Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::get('/stats', [AdminController::class, 'getStats']);
+        Route::get('/clubs/pending', [AdminController::class, 'getPendingClubs']);
+        Route::get('/clubs', [AdminController::class, 'getAllClubs']);
+        Route::post('/clubs/{id}/approve', [AdminController::class, 'approveClub']);
+        Route::post('/clubs/{id}/reject', [AdminController::class, 'rejectClub']);
+        Route::delete('/clubs/{id}', [AdminController::class, 'deleteClub']);
+        Route::get('/events', [AdminController::class, 'getAllEvents']);
+        Route::delete('/events/{id}', [AdminController::class, 'deleteEvent']);
+    });
 });

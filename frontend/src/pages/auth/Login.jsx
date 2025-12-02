@@ -47,6 +47,8 @@ const Login = () => {
                 navigate('/club/home');
             } else if (role === 'teacher') {
                 navigate('/teacher/dashboard');
+            } else if (role === 'admin') {
+                navigate('/admin/dashboard');
             } else {
                 navigate('/');
             }

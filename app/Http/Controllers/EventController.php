@@ -17,6 +17,14 @@ class EventController extends Controller
             return response()->json(['message' => 'Only clubs can create events'], 403);
         }
 
+        // Check if club is approved
+        if ($user->status !== 'approved') {
+            return response()->json([
+                'message' => 'Your club registration is pending admin approval. You cannot create events yet.',
+                'status' => $user->status
+            ], 403);
+        }
+
         $club = $user->club;
 
         if (!$club) {
@@ -38,6 +46,18 @@ class EventController extends Controller
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
         ]);
+
+        // Send notifications to all subscribers
+        $subscribers = $club->subscribers; // Assuming club has subscribers relationship
+        foreach ($subscribers as $subscriber) {
+            \App\Models\Notification::create([
+                'user_id' => $subscriber->id,
+                'type' => 'event_created',
+                'title' => 'New Event from ' . $club->club_name,
+                'message' => $event->title . ' on ' . date('M d, Y', strtotime($event->start_time)),
+                'data' => json_encode(['event_id' => $event->id, 'club_id' => $club->id])
+            ]);
+        }
 
         return response()->json(['message' => 'Event created successfully', 'event' => $event], 201);
     }

@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
 import { useState } from 'react';
 import BottomNav from './BottomNav';
+import NotificationBell from '../notifications/NotificationBell';
 import { Home, Star, Camera, User } from 'lucide-react';
 
 const Sidebar = () => {
@@ -64,38 +65,41 @@ const Navbar = () => {
                     <h1 className="text-2xl font-semibold"><span className="text-primary">Event</span>Hub</h1>
                 </div>
 
-                <div className="relative">
-                    <button
-                        onClick={() => setShowDropdown(!showDropdown)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
-                    >
-                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
-                            {user?.name?.charAt(0) || 'S'}
-                        </div>
-                        <span className="hidden md:inline">{user?.name || 'Student'}</span>
-                        <span className="text-xs">▼</span>
-                    </button>
+                <div className="flex items-center gap-4">
+                    <NotificationBell />
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowDropdown(!showDropdown)}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
+                        >
+                            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
+                                {user?.name?.charAt(0) || 'S'}
+                            </div>
+                            <span className="hidden md:inline">{user?.name || 'Student'}</span>
+                            <span className="text-xs">▼</span>
+                        </button>
 
-                    {showDropdown && (
-                        <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-2 z-50">
-                            <Link
-                                to="/student/profile"
-                                className="block px-4 py-2 hover:bg-secondary transition-colors"
-                                onClick={() => setShowDropdown(false)}
-                            >
-                                Profile
-                            </Link>
-                            <button
-                                onClick={() => {
-                                    logout();
-                                    setShowDropdown(false);
-                                }}
-                                className="w-full text-left px-4 py-2 hover:bg-secondary transition-colors text-destructive"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    )}
+                        {showDropdown && (
+                            <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-2 z-50">
+                                <Link
+                                    to="/student/profile"
+                                    className="block px-4 py-2 hover:bg-secondary transition-colors"
+                                    onClick={() => setShowDropdown(false)}
+                                >
+                                    Profile
+                                </Link>
+                                <button
+                                    onClick={() => {
+                                        logout();
+                                        setShowDropdown(false);
+                                    }}
+                                    className="w-full text-left px-4 py-2 hover:bg-secondary transition-colors text-destructive"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </header>
